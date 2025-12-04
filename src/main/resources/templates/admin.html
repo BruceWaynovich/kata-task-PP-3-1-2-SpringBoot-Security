@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Users</title>
+</head>
+<body>
+<div>
+    <h1>Список пользователей</h1>
+    <a href="/add" th:href="@{/add}">Добавить нового пользователя</a>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>FirstName</th>
+            <th>LastName</th>
+            <th>Delete</th>
+            <th>Edit</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.getId()}"></td>
+            <td th:text="${user.getFirstName()}"></td>
+            <td th:text="${user.getLastName()}"></td>
+            <td>
+                <form th:action="@{/delete}" method="post" style="display:inline">
+                    <input type="hidden" name="id" th:value="${user.id}"/>
+                    <button type="submit">Удалить</button>
+                </form>
+            </td>
+            <td>
+                <a th:href="@{/edit(id=${user.id})}">Редактировать</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<br/>
+
+<a href="/user">Ваш профиль</a>
+
+<br/>
+
+<a href="/admin/new">Создать нового пользователя</a>
+
+<br/>
+
+<form action="/admin/show" th:action="@{/admin/show}" method="get">
+    <label for="userId">Enter User ID:</label>
+    <input type="number" id="userId" name="id" placeholder="User ID" required>
+    <input type="submit" value="Search">
+</form>
+
+<br/>
+<br/>
+<br/>
+<form th:action="@{/logout}" method="post">
+    <input type="hidden" th:name="_csrf" th:value="${_csrf.token}"/>
+    <button type="submit">Logout</button>
+</form>
+</body>
+</html>
