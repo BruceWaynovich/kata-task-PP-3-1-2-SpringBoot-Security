@@ -7,6 +7,7 @@ import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -18,26 +19,18 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Role getRoleById(Long id) {
-        return roleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Роль не найдена: " + id));
+    public List<Role> getRolesByNames(List<String> roleNames) {
+        return roleNames.stream()
+                .map(roleName -> roleRepository.findByName(roleName))
+                .filter(role -> role != null)
+                .collect(Collectors.toList());
     }
 
-    @Override
-    @Transactional
-    public Role saveRole(Role role) {
-        return roleRepository.save(role);
-    }
-
-    @Override
-    @Transactional
-    public void deleteRole(Long id) {
-        roleRepository.deleteById(id);
-    }
 }

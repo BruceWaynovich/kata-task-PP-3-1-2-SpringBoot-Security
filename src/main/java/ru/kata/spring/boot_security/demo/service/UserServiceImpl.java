@@ -34,7 +34,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUserById(User user) {
-        userRepository.save(user);
+        User existingUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        existingUser.setUsername(user.getUsername());
+        userRepository.save(existingUser);
     }
 
     @Override
@@ -53,6 +59,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User findByUserName(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Пользователь не найден"));
     }
 }
